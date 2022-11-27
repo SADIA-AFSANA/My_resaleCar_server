@@ -43,6 +43,17 @@ async function run() {
         const usersCollection = client.db('resellCar').collection('users');
         const productsCollection = client.db('resellCar').collection('products');
 
+        // const verifyAdmin = async (req, res, next) => {
+        //     console.log('verifyAdmin', req.decoded.email)
+        //     const decodedEmail = req.decoded.email;
+        //     const query = { email: decodedEmail };
+        //     const user = await usersCollection.findOne(query);
+        //     if (user?.role !== 'admin') {
+        //         return res.status(403).send({ message: 'forbidden access' })
+        //     }
+        //     next();
+
+        // }
 
         app.get('/productsOptions', async (req, res) => {
             const query = {};
@@ -151,6 +162,13 @@ async function run() {
             const product = req.body;
             const result = await productsCollection.insertOne(product);
             res.send(result);
+        });
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await productsCollection.deleteOne(filter);
+            res.send(result)
+
         })
 
 
