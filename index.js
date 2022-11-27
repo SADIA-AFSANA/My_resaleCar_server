@@ -41,6 +41,7 @@ async function run() {
         const productOptionCollection = client.db('resellCar').collection('productsOptions');
         const bookingsCollection = client.db('resellCar').collection('bookings');
         const usersCollection = client.db('resellCar').collection('users');
+        const productsCollection = client.db('resellCar').collection('products');
 
 
         app.get('/productsOptions', async (req, res) => {
@@ -138,7 +139,20 @@ async function run() {
             }
             const result = await usersCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
+        });
+
+        app.get('/products', async (req, res) => {
+            const query = {};
+            const products = await productsCollection.find(query).toArray();
+            res.send(products);
         })
+
+        app.post('/products', async (req, res) => {
+            const product = req.body;
+            const result = await productsCollection.insertOne(product);
+            res.send(result);
+        })
+
 
     }
     finally {
