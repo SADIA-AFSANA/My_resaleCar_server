@@ -44,6 +44,7 @@ async function run() {
         const bookingsCollection = client.db('resellCar').collection('bookings');
         const usersCollection = client.db('resellCar').collection('users');
         const productsCollection = client.db('resellCar').collection('products');
+        const paymentsCollection = client.db('resellCar').collection('peyments');
 
         // const verifyAdmin = async (req, res, next) => {
         //     console.log('verifyAdmin', req.decoded.email)
@@ -117,16 +118,22 @@ async function run() {
             const amount = price * 100;
 
             const paymentIntent = await stripe.paymentIntents.create({
-                current: 'usd',
+                currency: 'usd',
                 amount: amount,
                 "payment_method_types": [
                     "card"
-                ],
+                ]
             });
             res.send({
                 clientSecret: paymentIntent.client_secret,
             });
 
+        });
+
+        app.post('/payments', async (req, res) => {
+            const payment = req.body;
+            const result = await paymentsCollection.insertOne(payment);
+            res.send(result)
         })
 
         app.get('/jwt', async (req, res) => {
